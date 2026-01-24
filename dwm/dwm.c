@@ -193,6 +193,7 @@ static void resizeclient(Client *c, int x, int y, int w, int h);
 static void resizemouse(const Arg *arg);
 static void restack(Monitor *m);
 static void run(void);
+static void runAutostart(void);
 static void scan(void);
 static int sendevent(Client *c, Atom proto);
 static void sendmon(Client *c, Monitor *m);
@@ -274,6 +275,7 @@ static Window root, wmcheckwin;
 struct NumTags { char limitexceeded[LENGTH(tags) > 31 ? -1 : 1]; };
 
 /* function implementations */
+
 
 
 
@@ -418,6 +420,7 @@ attachbottom(Client *c)
 	for (tc = &c->mon->clients; *tc; tc = &(*tc)->next);
 	*tc = c;
 }
+
 
 void
 attachstack(Client *c)
@@ -1429,6 +1432,14 @@ run(void)
 			handler[ev.type](&ev); /* call handler */
 }
 
+
+void
+runAutostart(void) {
+	system("cd ~/.dwm; ./autostart_blocking.sh");
+	system("cd ~/.dwm; ./autostart.sh &");
+}
+
+
 void
 scan(void)
 {
@@ -1455,6 +1466,10 @@ scan(void)
 			XFree(wins);
 	}
 }
+
+
+
+
 
 void
 sendmon(Client *c, Monitor *m)
@@ -2226,6 +2241,7 @@ main(int argc, char *argv[])
 		die("pledge");
 #endif /* __OpenBSD__ */
 	scan();
+	runAutostart();
 	run();
 	cleanup();
 	XCloseDisplay(dpy);
